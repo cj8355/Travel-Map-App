@@ -1,56 +1,179 @@
 import * as React from 'react';
-import { useState } from 'react';
-import Map, {Marker, Popup} from 'react-map-gl';
+import { useState, useEffect } from 'react';
+import Map, {Marker, Popup, } from 'react-map-gl';
 import RoomIcon from '@mui/icons-material/Room';
 import StarIcon from '@mui/icons-material/Star';
+import axios from "axios";
 import "./app.css";
+import Register from './components/Register';
+import Login from './components/Login';
+/*import {format} from "timeago.js";*/
+
 
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { width } from '@mui/system';
+
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [pins, setPins] = useState([]);
+  const [currentPlaceId, setCurrentPlaceId] = useState(null);
+  const [newPlace, setNewPlace] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [desc, setDesc] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [viewport, setViewport] = useState({
+    height: "100%",
+    width: "100%",
+    latitude: 46,
+    longitude: 17,
+    zoom: 4,
+  }); 
+
+  useEffect(() => {
+    const getPins = async () => {
+      try {
+        const allPins = await axios.get("/pins");
+        
+        setPins(allPins.data);
+        console.log(allPins.data);
+        console.log(pins);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    
+    getPins();
+    
+  }, []);
+
+  const handleMarkerClick = (id, lat, long) => {
+    setCurrentPlaceId(id);
+    setViewport({...viewport, latitude: lat, longitude: long});
+  };
+
+  const handleAddClick = (e) => {
+    console.log(e);
+    const longitude = e.lngLat.lng;
+    const latitude = e.lngLat.lat;
+    setNewPlace({
+      lat: latitude,
+      long: longitude,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newPin = {
+      username: currentUser,
+      title,
+      desc,
+      rating,
+      lat: newPlace.lat,
+      long:newPlace.long,
+    }
+
+    try {
+      const res = await axios.post("/pins", newPin);
+      setPins([...pins,res.data]);
+      setNewPlace(null);
+
+    } catch(err) {
+      console.log(err)
+
+    }
+  }
   
   return (
-    <div className="App">
+    <div className="App" style={{ height: "100vh", width: "100vh" }}>
     <Map
-      initialViewState={{
-        latitude: 48.78,
-        longitude: 2.47,
-        zoom: 5
-      }}
-      style={{width: "100vw", height: "100vh"}}
-      mapStyle="mapbox://styles/mapbox/streets-v9"
-      mapboxAccessToken={process.env.REACT_APP_MAPBOX}
-    >
-      <Marker longitude={2.2945} latitude={48.8584} color="red">
-        <RoomIcon style={{fontSize: "3em", color: "slateblue"}} />
-      </Marker>
-      {/* <Popup 
-        longitude={2.2945}
-        latitude={48.8584}
-        closeButton={true}
-        closeOnClick={false}
-        anchor="left">
-        <div className='card'>
-          <label>Place</label>
-          <h4 className='place'>Eiffell Tower</h4>
-          <label>Review</label>
-          <p className='desc'>Beautiful place. I like it.</p>
-          <label>Rating</label>
-          <div className='stars'>
-          <StarIcon className='star' />
-          <StarIcon className='star' />
-          <StarIcon className='star' />
-          <StarIcon className='star' />
-          <StarIcon className='star' />
-
-          </div>
-
-          <label>Information</label>
-          <span className='username'>Created by <b>charles</b></span>
-          <span className='date'>1 hour ago</span>
-          </div>
-      </Popup> */}
+      {...viewport}
+      mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       
+      mapStyle="mapbox://styles/mapbox/dark-v10"
+      onViewportChange={(viewport) => setViewport(viewport)}
+      onDblClick = {handleAddClick}
+      transitionDuration="200"
+    >
+      {pins.map((p) => (
+        <>
+         <Marker longitude={p.long} latitude={p.lat} color="red">
+         <RoomIcon style={{fontSize: "3em", color: p.username === currentUser ? "tomato" : "slateblue", cursor:"pointer"}} 
+         onClick={() => handleMarkerClick(p._id,p.lat,p.long)}
+         />
+       </Marker>
+
+       {p._id === currentPlaceId && (
+  <Popup 
+        key={p._id}
+         longitude={p.long}
+         latitude={p.lat}
+         closeButton={true}
+         closeOnClick={false}
+         anchor="left"
+         onClose={() => setCurrentPlaceId(null)}
+         >
+         <div className='card'>
+           <label>Place</label>
+           <h4 className='place'>{p.title}</h4>
+           <label>Review</label>
+           <p className='desc'>{p.desc}</p>
+           <label>Rating</label>
+           <div className='stars'>
+           {Array(p.rating).fill(<StarIcon className='star' />)}
+           
+ 
+           </div>
+ 
+           <label>Information</label>
+           <span className='username'>Created by <b>{p.username}</b></span>
+            {/* <span className='date'>{format(p.createdAt)}</span>  */}
+           </div>
+       </Popup> 
+       )}
+        </>
+      ))}
+      {newPlace && 
+      <Popup 
+         longitude={newPlace.long}
+         latitude={newPlace.lat}
+         closeButton={true}
+         closeOnClick={false}
+         anchor="left"
+         onClose={() => setNewPlace(null)}
+         >
+
+           <div>
+             <form onSubmit={handleSubmit}>
+               <label>Title</label>
+               <input placeholder='Enter a title' onChange={(e) => setTitle(e.target.value)}/>
+               <label>Review</label>
+               <textarea placeholder='Say something about this plave' onChange={(e) => setDesc(e.target.value)}/>
+               <label>Rating</label>
+               <select onChange={(e) => setRating(e.target.value)}>
+                 <option value="1">1</option>
+                 <option value="2">2</option>
+                 <option value="3">3</option>
+                 <option value="4">4</option>
+                 <option value="5">5</option>
+               </select>
+               <button className='submitButton' type='submit'>Add Pin</button>
+             </form>
+           </div>
+         </Popup> 
+      } 
+      {currentUser ? (<button className='button logout'>Log out</button>) 
+      : (
+      <div className='buttons'>
+      <button className='button login' onClick={() => setShowLogin(true)}>Login</button>
+      <button className='button register' onClick={() => setShowRegister(true)}>Register</button>
+      </div>
+      )}
+
+        {showRegister && <Register setShowRegister={setShowRegister}/>}
+        {showLogin && <Login setShowLogin={setShowLogin}/>}
     </Map>
      
     </div>
