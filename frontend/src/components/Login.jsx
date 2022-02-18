@@ -5,7 +5,7 @@ import { useState } from "react";
 import "./login.css";
 import CancelIcon from '@mui/icons-material/Cancel';
 
-export default function Login({setShowLogin}) {
+export default function Login({setShowLogin, myStorage, setCurrentUser}) {
     const [error, setError] = useState(false);
     const nameRef =useRef();
     const passwordRef =useRef();
@@ -18,7 +18,10 @@ export default function Login({setShowLogin}) {
         };
 
         try {
-            await axios.post("/users/login", user);
+            const res = await axios.post("/users/login", user);
+            myStorage.setItem("user", res.data.username);
+            setCurrentUser(res.data.username);
+            setShowLogin(false);
             setError(false);
 
         } catch (err) {
