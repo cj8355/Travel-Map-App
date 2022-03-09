@@ -4,11 +4,15 @@ import { useRef } from "react";
 import { useState } from "react";
 import "./login.css";
 import CancelIcon from '@mui/icons-material/Cancel';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
 
 export default function Login({setShowLogin, myStorage, setCurrentUser}) {
     const [error, setError] = useState(false);
     const nameRef =useRef();
     const passwordRef =useRef();
+    const clientID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    const [showLoginButton, setShowLoginButton] = useState(true);
+    const [showLogoutButton, setshowLogoutButton] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,6 +33,23 @@ export default function Login({setShowLogin, myStorage, setCurrentUser}) {
         }
     };
 
+    const onLoginSuccess = (res) => {
+        console.log("Login successful", res.profileObj);
+        setShowLoginButton(false);
+        setshowLogoutButton(true);
+    };
+
+    const onLoginFailure = (res) => {
+        console.log("Login failed", res);
+    };
+
+    const onSignoutSuccess = () => {
+        alert("Signed out!");
+        setShowLoginButton(true);
+        setshowLogoutButton(false);
+        console.clear();
+    };
+
   return (
     <div className="loginContainer">
         <div className="logo">
@@ -45,7 +66,29 @@ export default function Login({setShowLogin, myStorage, setCurrentUser}) {
             )}
             
         </form>
+        
         <CancelIcon className="loginCancel" onClick={() => setShowLogin(false)}/>
+
+        <div className="googleLogin">
+            {showLoginButton ? 
+            <GoogleLogin
+                clientId={clientID}
+                buttonText="Login"
+                onSuccess={onLoginSuccess}
+                onFailure={onLoginFailure}
+                cookiePolicy={'single_host_origin'}
+            /> : null
+            }
+
+    {showLogoutButton ?
+    <GoogleLogout
+        clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+        buttonText="Logout"
+        onLogoutSuccess={onSignoutSuccess}
+        >
+        </GoogleLogout> : null
+    }
+        </div>
     </div>
   )
 }

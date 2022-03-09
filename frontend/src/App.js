@@ -26,11 +26,9 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [viewport, setViewport] = useState({
-    height: "100%",
-    width: "100%",
-    latitude: 46,
+    /*latitude: 46,
     longitude: 17,
-    zoom: 4,
+    zoom: 4,*/
   }); 
 
   useEffect(() => {
@@ -93,11 +91,12 @@ const handleLogout = () => {
 }
   
   return (
-    <div className="App" style={{ height: "100vh", width: "100vh" }}>
+    <div className="App" style={{ height: "100vh", width: "100vw" }}>
     <Map
       {...viewport}
       mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-      
+      width="100%"
+      height="100%"
       mapStyle="mapbox://styles/mapbox/dark-v10"
       onViewportChange={(viewport) => setViewport(viewport)}
       onDblClick = {handleAddClick}
