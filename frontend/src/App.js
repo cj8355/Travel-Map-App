@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import Map, {Marker, Popup, } from 'react-map-gl';
+import MapGL, {Marker, Popup, GeolocateControl, NavigationControl, ScaleControl,  } from 'react-map-gl';
 import RoomIcon from '@mui/icons-material/Room';
 import StarIcon from '@mui/icons-material/Star';
 import axios from "axios";
@@ -26,9 +26,10 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [viewport, setViewport] = useState({
-    /*latitude: 46,
+    latitude: 46,
     longitude: 17,
-    zoom: 4,*/
+    zoom: 4,
+    
   }); 
 
   useEffect(() => {
@@ -89,18 +90,49 @@ const handleLogout = () => {
   myStorage.removeItem("user");
   setCurrentUser(null);
 }
+
+const styles = {
+  light: 'mapbox://styles/mapbox/light-v10',
+  dark: 'mapbox://styles/mapbox/dark-v10',
+  streets: 'mapbox://styles/mapbox/streets-v11',
+  outdoors: 'mapbox://styles/mapbox/outdoors-v11'
+};
+
+const [styleId, setStyleId] = useState('dark');
+
+
+
+/*const layerList = document.getElementById('menu');
+const inputs = layerList.getElementsByTagName('input');
+ 
+for (const input of inputs) {
+input.onclick = (layer) => {
+const layerId = layer.target.id;
+Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
+};
+}*/
   
   return (
     <div className="App" style={{ height: "100vh", width: "100vw" }}>
-    <Map
-      {...viewport}
+      <div id="menu">
+
+<button onClick={() => setStyleId('light')} className="styleBtn">Light</button>
+<button onClick={() => setStyleId('dark')} className="styleBtn">Dark</button>
+<button onClick={() => setStyleId('streets')} className="styleBtn">Streets</button>
+<button onClick={() => setStyleId('outdoors')} className="styleBtn">Outdoor</button>
+</div>
+    <MapGL
+      
       mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-      width="100%"
-      height="100%"
-      mapStyle="mapbox://styles/mapbox/dark-v10"
-      onViewportChange={(viewport) => setViewport(viewport)}
+      style={{ width: '100%', height: '100%' }}
+      latitude={viewport.latitude}
+      longitude={viewport.longitude}
+      zoom={viewport.zoom}
+      mapStyle={styles[styleId]}
+      onViewportChange={setViewport}
       onDblClick = {handleAddClick}
       transitionDuration="200"
+      
     >
       {pins.map((p) => (
         <>
@@ -179,7 +211,10 @@ const handleLogout = () => {
 
         {showRegister && <Register setShowRegister={setShowRegister}/>}
         {showLogin && <Login setShowLogin={setShowLogin} myStorage = {myStorage} setCurrentUser={setCurrentUser} />}
-    </Map>
+        <GeolocateControl position='top-right' />
+        <NavigationControl showCompass showZoom position='bottom-left' />
+        <ScaleControl unit='metric' position='bottom-right' />
+    </MapGL>
      
     </div>
   );
