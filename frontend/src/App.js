@@ -11,7 +11,7 @@ import Login from './components/Login';
 
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { width } from '@mui/system';
+
 
 
 function App() {
@@ -113,7 +113,7 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
 }*/
   
   return (
-    <div className="App" style={{ height: "100vh", width: "100vw" }}>
+    <div className="App" style={{ height: "100vh", width: "100%" }}>
       <div id="menu">
 
 <button onClick={() => setStyleId('light')} className="styleBtn">Light</button>
@@ -122,14 +122,16 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
 <button onClick={() => setStyleId('outdoors')} className="styleBtn">Outdoor</button>
 </div>
     <MapGL
-      
+      {...viewport}
       mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       style={{ width: '100%', height: '100%' }}
+      onMove={(viewport) => setViewport(viewport)}
       latitude={viewport.latitude}
       longitude={viewport.longitude}
       zoom={viewport.zoom}
       mapStyle={styles[styleId]}
-      onViewportChange={setViewport}
+      
+      /*onViewportChange={setViewport}*/
       onDblClick = {handleAddClick}
       transitionDuration="200"
       

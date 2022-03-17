@@ -106,4 +106,5 @@ input::placeholder, textarea::placeholder {
     border: none;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    cursor: pointer;
 }
