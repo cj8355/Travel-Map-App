@@ -116,10 +116,10 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
     <div className="App" style={{ height: "100vh", width: "100%" }}>
       <div id="menu">
 
-<button onClick={() => setStyleId('light')} className="styleBtn">Light</button>
-<button onClick={() => setStyleId('dark')} className="styleBtn">Dark</button>
-<button onClick={() => setStyleId('streets')} className="styleBtn">Streets</button>
-<button onClick={() => setStyleId('outdoors')} className="styleBtn">Outdoor</button>
+<button onClick={() => setStyleId('light')} className={styleId === "light" ? "styleBtn active" : "styleBtn"}>Light</button>
+<button onClick={() => setStyleId('dark')} className={styleId === "dark" ? "styleBtn active" : "styleBtn"}>Dark</button>
+<button onClick={() => setStyleId('streets')} className={styleId === "streets" ? "styleBtn active" : "styleBtn"}>Streets</button>
+<button onClick={() => setStyleId('outdoors')} className={styleId === "outdoors" ? "styleBtn active" : "styleBtn"}>Outdoor</button>
 </div>
     <MapGL
       {...viewport}
@@ -138,7 +138,7 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
     >
       {pins.map((p) => (
         <>
-         <Marker longitude={p.long} latitude={p.lat} color="red">
+         <Marker longitude={p.long} latitude={p.lat} color="red" key={p._id}>
          <RoomIcon style={{fontSize: "3em", color: p.username === currentUser ? "tomato" : "slateblue", cursor:"pointer"}} 
          onClick={() => handleMarkerClick(p._id,p.lat,p.long)}
          />

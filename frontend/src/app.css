@@ -105,6 +105,17 @@ input::placeholder, textarea::placeholder {
     text-decoration: none;
     border: none;
     background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    color: rgba(255, 255, 255, 0.267);
     cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+
+}
+
+.styleBtn:hover {
+    color: white;
+}
+
+.styleBtn.active {
+    color: rgb(165, 5, 5);
 }
