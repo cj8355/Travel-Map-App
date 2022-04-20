@@ -1,10 +1,14 @@
+// importing packages/libraries and MUI icons
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import MapGL, {Marker, Popup, GeolocateControl, NavigationControl, ScaleControl,  } from 'react-map-gl';
 import RoomIcon from '@mui/icons-material/Room';
 import StarIcon from '@mui/icons-material/Star';
 import axios from "axios";
+
 import "./app.css";
+
+//importing components
 import Register from './components/Register';
 import Login from './components/Login';
 /*import {format} from "timeago.js";*/
@@ -15,6 +19,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 
 function App() {
+  // setting state
   const myStorage = window.localStorage;
   const [currentUser, setCurrentUser] = useState(myStorage.getItem("user"));
   const [pins, setPins] = useState([]);
@@ -32,6 +37,7 @@ function App() {
     
   }); 
 
+  // gets all the pins and renders them on page load
   useEffect(() => {
     const getPins = async () => {
       try {
@@ -49,11 +55,13 @@ function App() {
     
   }, []);
 
+  // reposition the viewport when the user clicks on a pin to place the pin
   const handleMarkerClick = (id, lat, long) => {
     setCurrentPlaceId(id);
     setViewport({...viewport, latitude: lat, longitude: long});
   };
 
+  // allow the user to add a new pin
   const handleAddClick = (e) => {
     console.log(e);
     const longitude = e.lngLat.lng;
@@ -64,6 +72,7 @@ function App() {
     });
   };
 
+  // creates the new pin when user hits add pin
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newPin = {
@@ -86,11 +95,13 @@ function App() {
     }
   };
 
+  // removes the user from local storage when they log out
 const handleLogout = () => {
   myStorage.removeItem("user");
   setCurrentUser(null);
 }
 
+// setting different map styles so the user can switch the style
 const styles = {
   light: 'mapbox://styles/mapbox/light-v10',
   dark: 'mapbox://styles/mapbox/dark-v10',
@@ -98,6 +109,7 @@ const styles = {
   outdoors: 'mapbox://styles/mapbox/outdoors-v11'
 };
 
+// setting the style state
 const [styleId, setStyleId] = useState('dark');
 
 
@@ -112,6 +124,8 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
 };
 }*/
   
+
+// MAP
   return (
     <div className="App" style={{ height: "100vh", width: "100%" }}>
       <div id="menu">

@@ -1,5 +1,7 @@
+// requiring mongoose
 const mongoose = require("mongoose");
 
+// setting up the collection structure for users
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,

@@ -1,7 +1,8 @@
+// requiring mongoose
 const mongoose = require("mongoose");
 
 
-
+// setting up the collection structure for pins
 const PinSchema = new mongoose.Schema({
     username: {
         type: String,

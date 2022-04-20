@@ -1,19 +1,27 @@
+// importing packages/libraries and MUI icons
 import Room from "@mui/icons-material/Room";
 import axios from "axios";
 import { useRef } from "react";
 import { useState } from "react";
-import "./login.css";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 
+import "./login.css";
+
 export default function Login({setShowLogin, myStorage, setCurrentUser}) {
+    // setting state
     const [error, setError] = useState(false);
-    const nameRef =useRef();
-    const passwordRef =useRef();
-    const clientID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const [showLoginButton, setShowLoginButton] = useState(true);
     const [showLogoutButton, setshowLogoutButton] = useState(false);
 
+    // using useRef to store the users name and password
+    const nameRef =useRef();
+    const passwordRef =useRef();
+
+    // hiding clientID
+    const clientID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+    // function to handle the user clicking login
     const handleSubmit = async (e) => {
         e.preventDefault();
         const user = {
@@ -33,16 +41,19 @@ export default function Login({setShowLogin, myStorage, setCurrentUser}) {
         }
     };
 
+    // hide the login button and show the log out button when the user logs in
     const onLoginSuccess = (res) => {
         console.log("Login successful", res.profileObj);
         setShowLoginButton(false);
         setshowLogoutButton(true);
     };
 
+    // if the login fails, send the response
     const onLoginFailure = (res) => {
         console.log("Login failed", res);
     };
 
+    // alert to the user that they signed out, show login btn, hide logout btn
     const onSignoutSuccess = () => {
         alert("Signed out!");
         setShowLoginButton(true);
@@ -50,6 +61,7 @@ export default function Login({setShowLogin, myStorage, setCurrentUser}) {
         console.clear();
     };
 
+    // element the user sees when they click login
   return (
     <div className="loginContainer">
         <div className="logo">

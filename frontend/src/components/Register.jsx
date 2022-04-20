@@ -1,17 +1,23 @@
+// importing packages/libraries and MUI icons
 import Room from "@mui/icons-material/Room";
 import axios from "axios";
 import { useRef } from "react";
 import { useState } from "react";
-import "./register.css";
 import CancelIcon from '@mui/icons-material/Cancel';
 
+import "./register.css";
+
 export default function Register({setShowRegister}) {
+    // setting state
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
+
+    // using useRef to hold the user inputs for registering
     const nameRef =useRef();
     const emailRef =useRef();
     const passwordRef =useRef();
 
+    // register the new user when they click register
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newUser = {
@@ -30,6 +36,7 @@ export default function Register({setShowRegister}) {
         }
     };
 
+    // element the user sees when they click register
   return (
     <div className="registerContainer">
         <div className="logo">
