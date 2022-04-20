@@ -1,7 +1,7 @@
 // importing packages/libraries and MUI icons
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import MapGL, {Marker, Popup, GeolocateControl, NavigationControl, ScaleControl,  } from 'react-map-gl';
+import MapGL, {Marker, Popup, GeolocateControl, NavigationControl, ScaleControl, FullscreenControl } from 'react-map-gl';
 import RoomIcon from '@mui/icons-material/Room';
 import StarIcon from '@mui/icons-material/Star';
 import axios from "axios";
@@ -123,6 +123,8 @@ const layerId = layer.target.id;
 Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
 };
 }*/
+
+
   
 
 // MAP
@@ -230,6 +232,8 @@ Map.setmapStyle('mapbox://styles/mapbox/' + layerId);
         <GeolocateControl position='top-right' />
         <NavigationControl showCompass showZoom position='bottom-left' />
         <ScaleControl unit='metric' position='bottom-right' />
+        <FullscreenControl position='bottom-left' />
+        
     </MapGL>
      
     </div>
